@@ -1,0 +1,81 @@
+import re
+import datetime
+from rules import RULES
+from knowledge_base import KNOWLEDGE_BASE
+
+
+LOG_FILE = "conversation_log.txt"
+
+
+
+
+def log_message(role, message):
+with open(LOG_FILE, "a") as f:
+f.write(f"[{datetime.datetime.now()}] {role}: {message}\n")
+
+
+
+
+def match_intent(user_input):
+user_input = user_input.lower()
+for pattern, response in RULES.items():
+if re.search(pattern, user_input):
+return response
+return None
+
+
+
+
+def knowledge_lookup(user_input):
+user_input = user_input.lower()
+for keyword, answer in KNOWLEDGE_BASE.items():
+if keyword in user_input:
+return answer
+return None
+
+
+
+
+def chatbot():
+print("Chatbot: Hello! I'm your simple rule-based assistant. Type 'bye' to exit.")
+log_message("BOT", "Chatbot started.")
+
+
+while True:
+user_input = input("You: ")
+log_message("USER", user_input)
+
+
+if user_input.lower() in ["bye", "exit", "quit"]:
+response = "Goodbye! Have a great day!"
+print("Chatbot:", response)
+log_message("BOT", response)
+break
+
+
+# 1. Pattern matching rules
+intent_response = match_intent(user_input)
+if intent_response:
+print("Chatbot:", intent_response)
+log_message("BOT", intent_response)
+continue
+
+
+# 2. Knowledge base lookup
+kb_response = knowledge_lookup(user_input)
+if kb_response:
+print("Chatbot:", kb_response)
+log_message("BOT", kb_response)
+continue
+
+
+# 3. Default fallback
+fallback = "I'm not sure about that, but I'm learning every day!"
+print("Chatbot:", fallback)
+log_message("BOT", fallback)
+
+
+
+
+if __name__ == "__main__":
+chatbot()
